@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>World of Puffballs</title>
+
+    <style>
+        body {
+            background: linear-gradient(skyblue, turquoise);
+            font-family: sans-serif;
+            text-align: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 24px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: darkblue;
+        }
+
+        #puffball {
+            width: 220px;
+            max-width: 80%;
+            image-rendering: auto;
+        }
+
+        #dialogue {
+            background: white;
+            border: 3px solid darkblue;
+            border-radius: 16px;
+            padding: 16px;
+            max-width: 400px;
+            margin: 16px auto;
+        }
+
+        button {
+            margin: 5px;
+            padding: 10px 14px;
+            border: 2px solid darkblue;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #d8f6ff;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>World of Puffballs!</h1>
+    <p>Welcome to the puffball universe!</p>
+
+    <!-- Display Blue Puffball's neutral expression by default. -->
+    <img
+        id="puffball"
+        src="images/blue-puffball-neutral.png"
+        alt="Blue Puffball"
+    >
+
+    <!-- This paragraph will display what Blue Puffball says. -->
+    <p id="dialogue">Hi. Welcome to my world.</p>
+
+    <h2>Expressions</h2>
+
+    <!-- Each button requests a different expression. -->
+    <button onclick="changeExpression('neutral')">Neutral</button>
+    <button onclick="changeExpression('happy')">Happy</button>
+    <button onclick="changeExpression('sad')">Sad</button>
+    <button onclick="changeExpression('angry')">Angry</button>
+    <button onclick="changeExpression('confused')">Confused</button>
+    <button onclick="changeExpression('surprised')">Surprised</button>
+    <button onclick="changeExpression('laughing')">Laughing</button>
+    <button onclick="changeExpression('sleepy')">Sleepy</button>
+    <button onclick="changeExpression('embarrassed')">Embarrassed</button>
+    <button onclick="changeExpression('rolling')">Rolling</button>
+
+    <script>
+        // Store the image path for every expression.
+        // The names here must match the filenames in your images folder.
+        const expressions = {
+            neutral: "images/blue-puffball-neutral.png",
+            happy: "images/blue-puffball-happy.png",
+            sad: "images/blue-puffball-sad.png",
+            angry: "images/blue-puffball-angry.png",
+            confused: "images/blue-puffball-confused.png",
+            surprised: "images/blue-puffball-surprised.png",
+            laughing: "images/blue-puffball-laughing.png",
+            sleepy: "images/blue-puffball-sleepy.png",
+            embarrassed: "images/blue-puffball-embarrassed.png",
+            rolling: "images/blue-puffball-rolling.png"
+        };
+
+        // Find the character image and dialogue paragraph in the HTML.
+        const puffballImage = document.getElementById("puffball");
+        const dialogueText = document.getElementById("dialogue");
+
+        // Change Blue Puffball's image and words when an expression is selected.
+        function changeExpression(emotion) {
+            // Check that an image exists for the requested emotion.
+            if (!expressions[emotion]) {
+                return;
+            }
+
+            // Switch the character to the matching image file.
+            puffballImage.src = expressions[emotion];
+
+            // Give the image a useful description for accessibility.
+            puffballImage.alt = "Blue Puffball looking " + emotion;
+
+            // Display temporary example dialogue for the chosen expression.
+            const messages = {
+                neutral: "Hi. Welcome to my world.",
+                happy: "YOOO! YOU'RE HERE!",
+                sad: "Aw. It's a gloomy day.",
+                angry: "WHO TOOK MY SNACKS?!",
+                confused: "What is a refrigerator?",
+                surprised: "WHOA! Where did you come from?!",
+                laughing: "PFFT—HAHAHAHA!",
+                sleepy: "Five more minutes...",
+                embarrassed: "I meant to do that. Probably.",
+                rolling: "I HAVE BECOME A TRANSPORTATION METHOD."
+            };
+
+            // Put the matching dialogue inside the paragraph.
+            dialogueText.textContent = messages[emotion];
+        }
+    </script>
+</body>
+</html>
