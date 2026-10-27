@@ -35,6 +35,25 @@
             padding: 16px;
             max-width: 400px;
             margin: 16px auto;
+            overflow-wrap: anywhere;
+        }
+
+        #chat-box {
+            max-width: 450px;
+            margin: 20px auto;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.75);
+            border: 2px solid darkblue;
+            border-radius: 16px;
+        }
+
+        #user-message {
+            width: 90%;
+            box-sizing: border-box;
+            padding: 12px;
+            border: 2px solid darkblue;
+            border-radius: 10px;
+            font: inherit;
         }
 
         button {
@@ -44,10 +63,43 @@
             border-radius: 10px;
             background: white;
             cursor: pointer;
+            font: inherit;
         }
 
         button:hover {
             background: #d8f6ff;
+        }
+
+        button:disabled {
+            cursor: wait;
+            opacity: 0.6;
+        }
+
+        #status {
+            min-height: 1.5em;
+            overflow-wrap: anywhere;
+        }
+
+        #chat-history {
+            max-height: 260px;
+            overflow-y: auto;
+            text-align: left;
+            overflow-wrap: anywhere;
+        }
+
+        .chat-message {
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 10px;
+            background: white;
+        }
+
+        .user-chat {
+            border-left: 4px solid #1685d1;
+        }
+
+        .puffball-chat {
+            border-left: 4px solid darkblue;
         }
     </style>
 </head>
@@ -56,33 +108,62 @@
     <h1>World of Puffballs!</h1>
     <p>Welcome to the puffball universe!</p>
 
-    <!-- Display Blue Puffball's neutral expression by default. -->
+    <!-- Blue Puffball starts with a neutral expression. -->
     <img
         id="puffball"
         src="images/blue-puffball-neutral.png"
         alt="Blue Puffball"
     >
 
-    <!-- This paragraph will display what Blue Puffball says. -->
+    <!-- Blue Puffball's current dialogue. -->
     <p id="dialogue">Hi. Welcome to my world.</p>
 
-    <h2>Expressions</h2>
+    <!-- Chat with Blue Puffball's AI. -->
+    <section id="chat-box">
+        <h2>Talk to Blue Puffball!</h2>
 
-    <!-- Each button requests a different expression. -->
-    <button onclick="changeExpression('neutral')">Neutral</button>
-    <button onclick="changeExpression('happy')">Happy</button>
-    <button onclick="changeExpression('sad')">Sad</button>
-    <button onclick="changeExpression('angry')">Angry</button>
-    <button onclick="changeExpression('confused')">Confused</button>
-    <button onclick="changeExpression('surprised')">Surprised</button>
-    <button onclick="changeExpression('laughing')">Laughing</button>
-    <button onclick="changeExpression('sleepy')">Sleepy</button>
-    <button onclick="changeExpression('embarrassed')">Embarrassed</button>
-    <button onclick="changeExpression('rolling')">Rolling</button>
+        <div id="chat-history" aria-live="polite"></div>
+
+        <form id="chat-form">
+            <label for="user-message">Your message:</label>
+            <br><br>
+
+            <input
+                id="user-message"
+                name="message"
+                type="text"
+                placeholder="Say something to Blue Puffball..."
+                maxlength="1000"
+                autocomplete="off"
+                required
+            >
+
+            <br>
+
+            <button id="send-button" type="submit">
+                Send message
+            </button>
+        </form>
+
+        <p id="status" role="status"></p>
+    </section>
+
+    <h2>Expressions</h2>
+    <p>You can also change Blue Puffball's expression manually!</p>
+
+    <button type="button" onclick="changeExpression('neutral')">Neutral</button>
+    <button type="button" onclick="changeExpression('happy')">Happy</button>
+    <button type="button" onclick="changeExpression('sad')">Sad</button>
+    <button type="button" onclick="changeExpression('angry')">Angry</button>
+    <button type="button" onclick="changeExpression('confused')">Confused</button>
+    <button type="button" onclick="changeExpression('surprised')">Surprised</button>
+    <button type="button" onclick="changeExpression('laughing')">Laughing</button>
+    <button type="button" onclick="changeExpression('sleepy')">Sleepy</button>
+    <button type="button" onclick="changeExpression('embarrassed')">Embarrassed</button>
+    <button type="button" onclick="changeExpression('rolling')">Rolling</button>
 
     <script>
-        // Store the image path for every expression.
-        // The names here must match the filenames in your images folder.
+        // Images for all ten expressions.
         const expressions = {
             neutral: "images/blue-puffball-neutral.png",
             happy: "images/blue-puffball-happy.png",
@@ -96,40 +177,116 @@
             rolling: "images/blue-puffball-rolling.png"
         };
 
-        // Find the character image and dialogue paragraph in the HTML.
         const puffballImage = document.getElementById("puffball");
         const dialogueText = document.getElementById("dialogue");
+        const chatForm = document.getElementById("chat-form");
+        const userMessage = document.getElementById("user-message");
+        const sendButton = document.getElementById("send-button");
+        const statusText = document.getElementById("status");
+        const chatHistory = document.getElementById("chat-history");
 
-        // Change Blue Puffball's image and words when an expression is selected.
+        // Change Blue Puffball's expression.
         function changeExpression(emotion) {
-            // Check that an image exists for the requested emotion.
             if (!expressions[emotion]) {
                 return;
             }
 
-            // Switch the character to the matching image file.
             puffballImage.src = expressions[emotion];
-
-            // Give the image a useful description for accessibility.
             puffballImage.alt = "Blue Puffball looking " + emotion;
-
-            // Display temporary example dialogue for the chosen expression.
-            const messages = {
-                neutral: "Hi. Welcome to my world.",
-                happy: "YOOO! YOU'RE HERE!",
-                sad: "Aw. It's a gloomy day.",
-                angry: "WHO TOOK MY SNACKS?!",
-                confused: "What is a refrigerator?",
-                surprised: "WHOA! Where did you come from?!",
-                laughing: "PFFT—HAHAHAHA!",
-                sleepy: "Five more minutes...",
-                embarrassed: "I meant to do that. Probably.",
-                rolling: "I HAVE BECOME A TRANSPORTATION METHOD."
-            };
-
-            // Put the matching dialogue inside the paragraph.
-            dialogueText.textContent = messages[emotion];
         }
+
+        // Add a message to the chat without interpreting it as HTML.
+        function addChatMessage(speaker, message, className) {
+            const paragraph = document.createElement("p");
+            paragraph.className = "chat-message " + className;
+
+            const label = document.createElement("strong");
+            label.textContent = speaker + ": ";
+
+            paragraph.appendChild(label);
+            paragraph.appendChild(document.createTextNode(message));
+            chatHistory.appendChild(paragraph);
+
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        // Send a message to the Cloudflare Worker.
+        chatForm.addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const message = userMessage.value.trim();
+
+            if (!message) {
+                return;
+            }
+
+            addChatMessage("You", message, "user-chat");
+
+            userMessage.value = "";
+            userMessage.disabled = true;
+            sendButton.disabled = true;
+            statusText.textContent = "Blue Puffball is thinking...";
+
+            try {
+                const response = await fetch("/api/chat", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        message: message
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(
+                        data.error || "The AI request failed."
+                    );
+                }
+
+                if (typeof data.reply !== "string") {
+                    throw new Error("Blue Puffball sent an unexpected reply.");
+                }
+
+                // Read the emotion tag at the beginning of the reply.
+                const match = data.reply.match(
+                    /^\s*\[(neutral|happy|sad|angry|confused|surprised|laughing|sleepy|embarrassed|rolling)\]\s*/i
+                );
+
+                let reply = data.reply;
+                let emotion = "neutral";
+
+                if (match) {
+                    emotion = match[1].toLowerCase();
+                    reply = reply.slice(match[0].length);
+                }
+
+                // Update Blue Puffball's picture and dialogue.
+                changeExpression(emotion);
+                dialogueText.textContent = reply;
+
+                // Show the AI reply in the conversation.
+                addChatMessage(
+                    "Blue Puffball",
+                    reply,
+                    "puffball-chat"
+                );
+
+                statusText.textContent = "";
+            } catch (error) {
+                console.error("Blue Puffball chat error:", error);
+
+                statusText.textContent =
+                    "Uh-oh! I couldn't connect to my AI brain. " +
+                    error.message;
+            } finally {
+                userMessage.disabled = false;
+                sendButton.disabled = false;
+                userMessage.focus();
+            }
+        });
     </script>
 </body>
 </html>
